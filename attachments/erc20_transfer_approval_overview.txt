@@ -1,0 +1,18 @@
+Approval:
+
+A successful call to the "approve" function triggers an "Approval" event.
+
+The "approve" method authorizes given address to spend tokens
+from the address of the account that issued the "approve" method up to the specified amount.
+
+
+Difference between transfer to a transferFrom function:
+
+The "transferFrom" in combination with "approve" method is for delegating spending rights and using said rights.
+The "approve" method is being used to delegate spending rights up to certain specified amount,
+and "transferFrom" method is used by the spender to transfer tokens from the owner's account to a recipient.
+
+Unlike The "transferFrom" method, the "transfer" method is used to send tokens directly from the address of the account that issued the transfer,
+to the given address up to the given amount, there is no delegation of rights and the transfer is being issued directly by the owner.
+
+Majority of the token transactions happen with the transfer "method".
