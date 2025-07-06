@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from models import ApprovalsRequest, ApprovalsResponse
-from services.approvals_service import get_approvals_for_addresses
+from app.models import ApprovalsRequest, ApprovalsResponse
+from app.services.approvals_service import get_approvals_for_addresses
 
 router = APIRouter()
 
@@ -11,4 +11,3 @@ def get_approvals(request: ApprovalsRequest):
         return ApprovalsResponse(approvals=approvals)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
