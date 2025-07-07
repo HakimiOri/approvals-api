@@ -10,6 +10,7 @@ This repository contains a FastAPI-based API and a Python script for querying ER
 - [API Endpoint](#api-endpoint)
 - [Attachments](#attachments)
 - [Running `my_approvals.py` Script](#running-my_approvalspy-script)
+- [Example Requests](#example-requests)
 
 ---
 
@@ -70,6 +71,10 @@ Fetch the latest ERC20 approvals for a list of addresses.
   ```
 - **Error Handling:** Returns HTTP 500 with error details on failure.
 
+## Example Requests
+
+You can test the API using the included `test_main.http` file.
+
 ---
 
 ## Attachments
@@ -122,3 +127,5 @@ For more information on command-line arguments, use the --help flag:
 ```bash
 python ./attachments/my_approvals.py --help
 ```
+
+---

@@ -1,11 +1,35 @@
 # Test your FastAPI endpoints
 
-GET http://127.0.0.1:8000/
-Accept: application/json
+POST http://127.0.0.1:8000/get_approvals
+Content-Type: application/json
+
+{
+  "addresses": [
+    "0x005e20fCf757B55D6E27dEA9BA4f90C0B03ef852",
+    "0x28C6c06298d514Db089934071355E5743bf21d60"
+  ],
+  "include_prices": true
+}
 
 ###
 
-GET http://127.0.0.1:8000/hello/User
-Accept: application/json
+POST http://127.0.0.1:8000/get_approvals
+Content-Type: application/json
+
+{
+  "addresses": 3
+}
+
+###
+
+POST http://127.0.0.1:8000/get_approvals
+Content-Type: application/json
+
+{
+  "addresses": [
+    "0x005e20fCf757B55D6E27dEA9BA4f90C0B03EF852"
+  ],
+  "include_prices": false
+}
 
 ###

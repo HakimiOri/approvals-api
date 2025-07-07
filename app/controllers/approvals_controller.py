@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 import logging
+from pydantic import ValidationError
 
 from app.dal.approvals.infura_approvals_dal import InfuraDAL
 from app.dal.token_price.coingecko_token_price_dal import CoingeckoTokenPriceDAL
@@ -26,6 +27,9 @@ async def get_approvals(request: ApprovalsRequest,
         response = await service.get_latest_approvals(request)
         logger.info(f"Returning approvals response with {len(response.approvalsByAddress)} approvals")
         return response
+    except (ValueError, ValidationError) as e:
+        logger.warning(f"Bad request in get_approvals: {e}", exc_info=True)
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Error in get_approvals: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
