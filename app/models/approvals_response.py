@@ -1,6 +1,7 @@
 from pydantic import BaseModel
-from typing import List, Dict
+
+from app.models.approvals import Approval
+
 
 class ApprovalsResponse(BaseModel):
-    approvals: List[Dict]
-
+    approvalsByAddress: dict[str, list[Approval]]

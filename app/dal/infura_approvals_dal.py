@@ -11,7 +11,7 @@ from web3 import Web3
 from web3.contract import Contract
 from web3.types import FilterParams, LogReceipt
 
-from app.models.approvals_log import ApprovalLog
+from app.models.approvals import ApprovalLog
 from config import LRU_CACHE_MAXSIZE
 from .approvals_dal import ApprovalsDAL
 
@@ -57,6 +57,7 @@ class InfuraDAL(ApprovalsDAL):
             raise RuntimeError("Error: Failed to connect to Infura. Check your API key and network connection.")
         return w3
 
+#Todo: Change Dal name as get_token_symbol has nothing to do with approvals
     def get_token_symbol(self, token_address: ChecksumAddress) -> str:
         if token_address in self.symbol_cache:
             return self.symbol_cache[token_address]
