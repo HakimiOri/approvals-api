@@ -12,7 +12,7 @@ from web3 import AsyncWeb3
 from web3.types import FilterParams, LogReceipt
 
 from app.models.approvals import ApprovalLog
-from app.Utils.config_loader import config
+from app.utils.config_loader import config
 from .approvals_dal import ApprovalsDAL
 
 APPROVAL_EVENT_SIGNATURE_HASH: Final[str] = AsyncWeb3.keccak(text="Approval(address,address,uint256)").hex()

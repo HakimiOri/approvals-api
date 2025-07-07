@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 
-from app.Utils.config_loader import config
+from app.utils.config_loader import config
 from app.dal.infura_approvals_dal import InfuraDAL
 from app.models.approvals_request import ApprovalsRequest
 from app.models.approvals_response import ApprovalsResponse

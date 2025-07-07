@@ -12,6 +12,6 @@ class ApprovalLog(BaseModel):
     log_index: Optional[int] = None
 
 class Approval(BaseModel):
-    amount: int
+    amount: str
     spender_address: str
     token_symbol: str
