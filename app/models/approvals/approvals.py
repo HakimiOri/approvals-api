@@ -15,3 +15,4 @@ class Approval(BaseModel):
     amount: str
     spender_address: str
     token_symbol: str
+    price_usd: Optional[float] = None

@@ -9,6 +9,7 @@ class Config:
     approvals_api_retries: int
     approvals_api_concurrency_limit: int
     approvals_api_retry_delay: int
+    coingecko_api_url: str
 
 
 class ConfigProvider(ABC):
@@ -29,6 +30,7 @@ class DefaultConfigProvider(ConfigProvider):
             approvals_api_retries=int(data['APPROVALS_API_RETRIES']),
             approvals_api_concurrency_limit=int(data['APPROVALS_API_CONCURRENCY_LIMIT']),
             approvals_api_retry_delay=int(data['APPROVALS_API_RETRY_DELAY']),
+            coingecko_api_url=data['COINGECKO_API_URL'],
         )
 
 

@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from app.models.approvals import Approval
+from app.models.approvals.approvals import Approval
 
 
 class ApprovalsResponse(BaseModel):

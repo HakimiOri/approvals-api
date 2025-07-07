@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models.approvals import ApprovalLog
+from app.models.approvals.approvals import ApprovalLog
 
 
 class ApprovalsDAL(ABC):

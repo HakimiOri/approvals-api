@@ -11,7 +11,7 @@ from web3.eth import AsyncEth
 from web3 import AsyncWeb3
 from web3.types import FilterParams, LogReceipt
 
-from app.models.approvals import ApprovalLog
+from app.models.approvals.approvals import ApprovalLog
 from app.utils.config_loader import config
 from .approvals_dal import ApprovalsDAL
 
