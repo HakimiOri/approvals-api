@@ -1,0 +1,100 @@
+import logging
+import os
+import sys
+from typing import Final, List
+
+import cachetools
+from eth_abi import decode
+from eth_typing import ChecksumAddress, HexStr
+from eth_utils import to_bytes, to_hex
+from web3 import Web3
+from web3.contract import Contract
+from web3.types import FilterParams, LogReceipt
+
+from app.models.approvals_log import ApprovalLog
+from config import LRU_CACHE_MAXSIZE
+from .approvals_dal import ApprovalsDAL
+
+APPROVAL_EVENT_SIGNATURE_HASH: Final[str] = Web3.keccak(text="Approval(address,address,uint256)").hex()
+ERC20_SYMBOL_ABI: Final = [{
+    "constant": True,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [{"name": "", "type": "string"}],
+    "type": "function"
+}]
+
+INFURA_API_KEY = os.environ.get("INFURA_API_KEY")
+if not INFURA_API_KEY:
+    sys.exit("Error: INFURA_API_KEY environment variable not set.")
+
+class InfuraDAL(ApprovalsDAL):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self, logger=None):
+        if getattr(self, '_initialized', False):
+            return
+        self.w3 = self._get_infura_provider()
+        self.symbol_cache = cachetools.LRUCache(maxsize=LRU_CACHE_MAXSIZE)
+        self._logger = logger or logging.getLogger(__name__)
+        self._initialized = True
+
+    @classmethod
+    def get_instance(cls):
+        return cls()
+
+    @staticmethod
+    def _get_infura_provider() -> Web3:
+        infura_url = f"https://mainnet.infura.io/v3/{INFURA_API_KEY}"
+        w3: Web3 = Web3(Web3.HTTPProvider(infura_url))
+
+        if not w3.is_connected():
+            raise RuntimeError("Error: Failed to connect to Infura. Check your API key and network connection.")
+        return w3
+
+    def get_token_symbol(self, token_address: ChecksumAddress) -> str:
+        if token_address in self.symbol_cache:
+            return self.symbol_cache[token_address]
+        try:
+            contract: Contract = self.w3.eth.contract(address=token_address, abi=ERC20_SYMBOL_ABI)
+            symbol: str = contract.functions.symbol().call()
+        except (ValueError, ConnectionError, KeyError, AttributeError) as e:
+            self._logger.warning(f"Failed to fetch token symbol for {token_address}: {e}")
+            symbol = "UnknownERC20"
+        self.symbol_cache[token_address] = symbol
+        return symbol
+
+    def fetch_approval_logs(self, owner_address: str) -> List[ApprovalLog]:
+        address_bytes: bytes = to_bytes(hexstr=owner_address)
+        topic_owner: HexStr = to_hex(b'\x00' * 12 + address_bytes)
+
+        filter_params: FilterParams = {
+            "fromBlock": 0,
+            "toBlock": "latest",
+            "topics": [
+                '0x' + APPROVAL_EVENT_SIGNATURE_HASH,
+                topic_owner
+            ]
+        }
+
+        try:
+            logs: list[LogReceipt] = self.w3.eth.get_logs(filter_params)
+            approval_logs = []
+            for log in logs:
+                approval_logs.append(ApprovalLog(
+                    block_number=log.get('blockNumber'),
+                    transaction_hash=log.get('transactionHash').hex() if log.get('transactionHash') else '',
+                    amount=decode(['uint256'], log['data'])[0],
+                    spender='0x' + log['topics'][2].hex()[-40:].lower(),
+                    token_address=log.get('address'),
+                    log_index=log.get('logIndex')
+                ))
+            return approval_logs
+        except (ValueError, ConnectionError, KeyError) as e:
+            self._logger.error(f"Error fetching approval logs for {owner_address}: {e}")
+            raise RuntimeError(f"Error fetching logs: {e}")
