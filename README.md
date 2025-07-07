@@ -95,7 +95,7 @@ The `my_approvals.py` script allows you to fetch and display all past ERC20 toke
 ### Installation
 Before running the script, set your Infura API key as an environment variable:
 
-```bash
+```
 export INFURA_API_KEY="YOUR_INFURA_API_KEY"
 # Replace "YOUR_INFURA_API_KEY" with your actual Infura API key.
 ```
@@ -103,18 +103,18 @@ export INFURA_API_KEY="YOUR_INFURA_API_KEY"
 ### Usage
 Run the script from your terminal:
 
-```bash
+```
 python ./attachments/my_approvals.py --address <PUBLIC_ADDRESS>
 # Replace <PUBLIC_ADDRESS> with the blockchain address you want to query.
 ```
 
 ### Example
-```bash
+```
 python ./attachments/my_approvals.py --address 0x28C6c06298d514Db089934071355E5743bf21d60
 ```
 
 ### Sample Output
-```bash
+```
 Fetching latest approvals:
 Approval on SLP for 4,000 to 0x64192819Ac13Ef72bF6b5AE239AC672B43a9AF08
 Approval on GALA for 0 to 0x956AAE9c8267390A036a6D41b3dE7E1e2044230e
