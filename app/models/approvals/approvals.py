@@ -16,3 +16,6 @@ class Approval(BaseModel):
     spender_address: str
     token_symbol: str
     price_usd: Optional[float] = None
+
+    class Config:
+        exclude_none = True

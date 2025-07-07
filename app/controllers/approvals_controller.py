@@ -25,7 +25,7 @@ async def get_approvals(request: ApprovalsRequest,
     try:
         logger.info(f"Received get_approvals request with {len(request.addresses)} addresses")
         response = await service.get_latest_approvals(request)
-        logger.info(f"Returning approvals response with {len(response.approvals)} approvals")
+        logger.info(f"Returning approvals response with {len(response.approvalsByAddress)} approvals")
         return response
     except Exception as e:
         logger.error(f"Error in get_approvals: {e}", exc_info=True)
