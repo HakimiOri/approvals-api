@@ -1,7 +1,6 @@
 import asyncio
-
 from app.services.approvals_service_base import ApprovalsServiceBase
-from app.utils.config_loader import Config
+from app.utils.config_loader import config
 from app.utils.log_processor import process_approval_logs
 from app.dal.approvals.approvals_dal import ApprovalsDAL
 from app.models.approvals.approvals import Approval, ApprovalLog
@@ -18,17 +17,16 @@ class ApprovalsService(ApprovalsServiceBase):
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, dal: ApprovalsDAL, config: Config, token_price_dal: CoingeckoTokenPriceDAL):
+    def __init__(self, dal: ApprovalsDAL, token_price_dal: CoingeckoTokenPriceDAL):
         if getattr(self, '_initialized', False):
             return
         self.dal = dal
-        self._config = config
         self.token_price_dal = token_price_dal
         self._initialized = True
 
     @classmethod
-    def get_instance(cls, dal: ApprovalsDAL, config: Config, token_price_dal=None):
-        return cls(dal, config, token_price_dal)
+    def get_instance(cls, dal: ApprovalsDAL, token_price_dal=None):
+        return cls(dal, token_price_dal)
 
     @staticmethod
     def _is_latest_approval(new_log: ApprovalLog, current_log: ApprovalLog) -> bool:
@@ -36,7 +34,6 @@ class ApprovalsService(ApprovalsServiceBase):
 
     async def _fetch_for_address(self, owner_address: str, approvals_by_address: dict, errors_by_address: dict,
                                  semaphore: asyncio.Semaphore, include_prices: bool = False):
-        config = self._config
         last_exception = None
         for attempt in range(config.approvals_api_retries):
             try:
@@ -60,7 +57,7 @@ class ApprovalsService(ApprovalsServiceBase):
     async def get_latest_approvals(self, request: ApprovalsRequest) -> ApprovalsResponse:
         approvals_by_address: dict[str, list[Approval]] = {}
         errors_by_address: dict[str, str] = {}
-        semaphore = asyncio.Semaphore(self._config.approvals_service_concurrency_limit)
+        semaphore = asyncio.Semaphore(config.approvals_service_concurrency_limit)
         include_prices = bool(getattr(request, 'include_prices', False))
         await asyncio.gather(
             *(self._fetch_for_address(addr, approvals_by_address, errors_by_address, semaphore, include_prices=include_prices) for addr in

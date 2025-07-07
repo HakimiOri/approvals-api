@@ -11,11 +11,9 @@ class ApprovalLog(BaseModel):
     token_address: str
     log_index: Optional[int] = None
 
+
 class Approval(BaseModel):
     amount: str
     spender_address: str
     token_symbol: str
     price_usd: Optional[float] = None
-
-    class Config:
-        exclude_none = True

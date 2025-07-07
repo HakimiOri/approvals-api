@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 import logging
 
-from app.utils.config_loader import config
 from app.dal.approvals.infura_approvals_dal import InfuraDAL
 from app.dal.token_price.coingecko_token_price_dal import CoingeckoTokenPriceDAL
 from app.models.approvals.approvals_request import ApprovalsRequest
@@ -16,10 +15,10 @@ logger = logging.getLogger(__name__)
 def get_approvals_service() -> ApprovalsServiceBase:
     dal: InfuraDAL = InfuraDAL.get_instance()
     token_price_dal = CoingeckoTokenPriceDAL.get_instance()
-    return ApprovalsService.get_instance(dal, config, token_price_dal)
+    return ApprovalsService.get_instance(dal, token_price_dal)
 
 
-@router.post("/get_approvals", response_model=ApprovalsResponse)
+@router.post("/get_approvals", response_model=ApprovalsResponse,  response_model_exclude_none=True)
 async def get_approvals(request: ApprovalsRequest,
                         service: ApprovalsServiceBase = Depends(get_approvals_service)) -> ApprovalsResponse:
     try:
