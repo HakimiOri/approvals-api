@@ -27,11 +27,11 @@ class ApprovalsService(ApprovalsServiceABC):
     def is_latest_approval(new_log: ApprovalLog, current_log: ApprovalLog) -> bool:
         return (new_log.block_number, new_log.log_index or 0) > (current_log.block_number, current_log.log_index or 0)
 
-    def get_latest_approvals(self, request: ApprovalsRequest) -> ApprovalsResponse:
+    async def get_latest_approvals(self, request: ApprovalsRequest) -> ApprovalsResponse:
         approvals_by_address: dict[str, list[Approval]] = {}
 
         for owner_address in request.addresses:
-            approval_logs: list[ApprovalLog] = self.dal.fetch_approval_logs(owner_address)
+            approval_logs: list[ApprovalLog] = await self.dal.fetch_approval_logs(owner_address)
             latest_approvals = {}
 
             for log in approval_logs:
@@ -46,7 +46,7 @@ class ApprovalsService(ApprovalsServiceABC):
                 Approval(
                     amount=approval_log.amount,
                     spender_address=approval_log.spender,
-                    token_symbol= self.dal.get_token_symbol(approval_log.token_address),
+                    token_symbol=await self.dal.get_token_symbol(approval_log.token_address),
                 )
                 for approval_log in latest_approvals.values()
             ]

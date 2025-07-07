@@ -7,15 +7,15 @@ import cachetools
 from eth_abi import decode
 from eth_typing import ChecksumAddress, HexStr
 from eth_utils import to_bytes, to_hex
-from web3 import Web3
-from web3.contract import Contract
+from web3.eth import AsyncEth
+from web3 import AsyncWeb3
 from web3.types import FilterParams, LogReceipt
 
 from app.models.approvals import ApprovalLog
 from config import LRU_CACHE_MAXSIZE
 from .approvals_dal import ApprovalsDAL
 
-APPROVAL_EVENT_SIGNATURE_HASH: Final[str] = Web3.keccak(text="Approval(address,address,uint256)").hex()
+APPROVAL_EVENT_SIGNATURE_HASH: Final[str] = AsyncWeb3.keccak(text="Approval(address,address,uint256)").hex()
 ERC20_SYMBOL_ABI: Final = [{
     "constant": True,
     "inputs": [],
@@ -49,28 +49,25 @@ class InfuraDAL(ApprovalsDAL):
         return cls()
 
     @staticmethod
-    def _get_infura_provider() -> Web3:
+    def _get_infura_provider() -> AsyncWeb3:
         infura_url = f"https://mainnet.infura.io/v3/{INFURA_API_KEY}"
-        w3: Web3 = Web3(Web3.HTTPProvider(infura_url))
-
-        if not w3.is_connected():
-            raise RuntimeError("Error: Failed to connect to Infura. Check your API key and network connection.")
+        w3: AsyncWeb3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(infura_url), modules={"eth": (AsyncEth,)})
         return w3
 
 #Todo: Change Dal name as get_token_symbol has nothing to do with approvals
-    def get_token_symbol(self, token_address: ChecksumAddress) -> str:
+    async def get_token_symbol(self, token_address: ChecksumAddress) -> str:
         if token_address in self.symbol_cache:
             return self.symbol_cache[token_address]
         try:
-            contract: Contract = self.w3.eth.contract(address=token_address, abi=ERC20_SYMBOL_ABI)
-            symbol: str = contract.functions.symbol().call()
+            contract = self.w3.eth.contract(address=token_address, abi=ERC20_SYMBOL_ABI)
+            symbol: str = await contract.functions.symbol().call()
         except (ValueError, ConnectionError, KeyError, AttributeError) as e:
             self._logger.warning(f"Failed to fetch token symbol for {token_address}: {e}")
             symbol = "UnknownERC20"
         self.symbol_cache[token_address] = symbol
         return symbol
 
-    def fetch_approval_logs(self, owner_address: str) -> List[ApprovalLog]:
+    async def fetch_approval_logs(self, owner_address: str) -> List[ApprovalLog]:
         address_bytes: bytes = to_bytes(hexstr=owner_address)
         topic_owner: HexStr = to_hex(b'\x00' * 12 + address_bytes)
 
@@ -84,7 +81,7 @@ class InfuraDAL(ApprovalsDAL):
         }
 
         try:
-            logs: list[LogReceipt] = self.w3.eth.get_logs(filter_params)
+            logs: list[LogReceipt] = await self.w3.eth.get_logs(filter_params)
             approval_logs = []
             for log in logs:
                 approval_logs.append(ApprovalLog(

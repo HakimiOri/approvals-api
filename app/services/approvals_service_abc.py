@@ -5,5 +5,5 @@ from app.models import ApprovalsResponse, ApprovalsRequest
 
 class ApprovalsServiceABC(ABC):
     @abstractmethod
-    def get_latest_approvals(self, request: ApprovalsRequest) -> ApprovalsResponse:
+    async def get_latest_approvals(self, request: ApprovalsRequest) -> ApprovalsResponse:
         pass

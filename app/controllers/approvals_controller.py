@@ -15,9 +15,9 @@ def get_approvals_service() -> ApprovalsServiceABC:
 
 
 @router.post("/get_approvals", response_model=ApprovalsResponse)
-def get_approvals(request: ApprovalsRequest,
+async def get_approvals(request: ApprovalsRequest,
                   service: ApprovalsServiceABC = Depends(get_approvals_service)) -> ApprovalsResponse:
     try:
-        return service.get_latest_approvals(request)
+        return await service.get_latest_approvals(request)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
