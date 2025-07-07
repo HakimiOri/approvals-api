@@ -12,7 +12,7 @@ from web3 import AsyncWeb3
 from web3.types import FilterParams, LogReceipt
 
 from app.models.approvals import ApprovalLog
-from config import LRU_CACHE_MAXSIZE
+from app.Utils.config_loader import config
 from .approvals_dal import ApprovalsDAL
 
 APPROVAL_EVENT_SIGNATURE_HASH: Final[str] = AsyncWeb3.keccak(text="Approval(address,address,uint256)").hex()
@@ -40,7 +40,7 @@ class InfuraDAL(ApprovalsDAL):
         if getattr(self, '_initialized', False):
             return
         self.w3 = self._get_infura_provider()
-        self.symbol_cache = cachetools.LRUCache(maxsize=LRU_CACHE_MAXSIZE)
+        self.symbol_cache = cachetools.LRUCache(maxsize=config.lru_cache_maxsize)
         self._logger = logger or logging.getLogger(__name__)
         self._initialized = True
 
