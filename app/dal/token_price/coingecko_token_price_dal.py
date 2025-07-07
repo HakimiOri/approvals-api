@@ -39,7 +39,7 @@ class CoingeckoTokenPriceDAL(TokenPriceDAL):
             async with httpx.AsyncClient() as client:
                 response = await client.get(api_url, params=params)
                 if response.status_code != 200:
-                    self._logger.warning(f"Coingecko API returned status {response.status_code} for {token_address}")
+                    self._logger.warning(f"Coingecko API returned status code {response.status_code} for {token_address}")
                     return None
                 data = response.json()
                 price_info = data.get(token_address.lower())
