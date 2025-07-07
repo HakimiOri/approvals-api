@@ -60,7 +60,7 @@ class ApprovalsService(ApprovalsServiceBase):
     async def get_latest_approvals(self, request: ApprovalsRequest) -> ApprovalsResponse:
         approvals_by_address: dict[str, list[Approval]] = {}
         errors_by_address: dict[str, str] = {}
-        semaphore = asyncio.Semaphore(self._config.approvals_api_concurrency_limit)
+        semaphore = asyncio.Semaphore(self._config.approvals_service_concurrency_limit)
         include_prices = bool(getattr(request, 'include_prices', False))
         await asyncio.gather(
             *(self._fetch_for_address(addr, approvals_by_address, errors_by_address, semaphore, include_prices=include_prices) for addr in

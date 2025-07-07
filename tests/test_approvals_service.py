@@ -9,7 +9,7 @@ def get_mocks(concurrency=1, retries=1, retry_delay=0):
     mock_dal = MagicMock()
     mock_config = MagicMock()
     mock_token_price_dal = MagicMock()
-    mock_config.approvals_api_concurrency_limit = concurrency
+    mock_config.approvals_service_concurrency_limit = concurrency
     mock_config.approvals_api_retries = retries
     mock_config.approvals_api_retry_delay = retry_delay
     service = ApprovalsService(mock_dal, mock_config, mock_token_price_dal)

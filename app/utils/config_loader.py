@@ -7,7 +7,8 @@ from dataclasses import dataclass
 class Config:
     lru_cache_maxsize: int
     approvals_api_retries: int
-    approvals_api_concurrency_limit: int
+    approvals_service_concurrency_limit: int
+    log_processor_concurrency_limit: int
     approvals_api_retry_delay: int
     coingecko_api_url: str
 
@@ -28,7 +29,8 @@ class DefaultConfigProvider(ConfigProvider):
         return Config(
             lru_cache_maxsize=int(data['LRU_CACHE_MAXSIZE']),
             approvals_api_retries=int(data['APPROVALS_API_RETRIES']),
-            approvals_api_concurrency_limit=int(data['APPROVALS_API_CONCURRENCY_LIMIT']),
+            approvals_service_concurrency_limit=int(data['APPROVALS_SERVICE_CONCURRENCY_LIMIT']),
+            log_processor_concurrency_limit=int(data['LOG_PROCESSOR_CONCURRENCY_LIMIT']),
             approvals_api_retry_delay=int(data['APPROVALS_API_RETRY_DELAY']),
             coingecko_api_url=data['COINGECKO_API_URL'],
         )
