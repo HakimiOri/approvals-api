@@ -1,15 +1,15 @@
 import asyncio
 
+from app.services.approvals_service_base import ApprovalsServiceBase
 from app.utils.config_loader import Config
 from app.utils.log_processor import process_approval_logs
 from app.dal.approvals_dal import ApprovalsDAL
 from app.models.approvals import Approval, ApprovalLog
 from app.models.approvals_request import ApprovalsRequest
 from app.models.approvals_response import ApprovalsResponse
-from .approvals_service_abc import ApprovalsServiceABC
 
 
-class ApprovalsService(ApprovalsServiceABC):
+class ApprovalsService(ApprovalsServiceBase):
     _instance = None
 
     def __new__(cls, *args, **kwargs):
