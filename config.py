@@ -1,5 +1,7 @@
-# Application configuration settings
-# Example: Database URL, API keys, etc.
-DATABASE_URL = "sqlite:///./test.db"
 API_KEY = "your-api-key-here"
-LRU_CACHE_MAXSIZE: int = 1000
+
+LRU_CACHE_MAXSIZE = 1000
+
+APPROVALS_API_RETRIES = 3
+APPROVALS_API_CONCURRENCY_LIMIT = 5
+APPROVALS_API_RETRY_DELAY = 1
