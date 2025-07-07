@@ -119,7 +119,7 @@ def main():
 
     infura_api_key: str = os.environ.get(INFURA_API_KEY)
     if not infura_api_key:
-        sys.exit("Error: INFURA_API_KEY environment variable is required")
+        sys.exit("Exiting - INFURA_API_KEY environment variable is required")
 
     w3: Web3 = get_infura_provider(infura_api_key)
 

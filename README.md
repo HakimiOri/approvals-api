@@ -27,15 +27,15 @@ The Approvals API provides a REST endpoint to fetch the latest ERC20 token appro
 ## Running the API
 
 1. **Install dependencies:**
-   ```bash
+   ```
    pip install -r requirements.txt
    ```
 2. **Set your Infura API key as an environment variable:**
-   ```bash
+   ```
    export INFURA_API_KEY="YOUR_INFURA_API_KEY"
    ```
 3. **Start the API server:**
-   ```bash
+   ```
    uvicorn main:app --reload
    ```
    The API will be available at `http://127.0.0.1:8000`.

@@ -26,7 +26,7 @@ ERC20_SYMBOL_ABI: Final = [{
 
 INFURA_API_KEY = os.environ.get("INFURA_API_KEY")
 if not INFURA_API_KEY:
-    sys.exit("Error: INFURA_API_KEY environment variable not set.")
+    sys.exit("Exiting - INFURA_API_KEY environment variable not set.")
 
 class InfuraDAL(ApprovalsDAL):
     _instance = None
