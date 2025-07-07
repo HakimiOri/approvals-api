@@ -1,13 +1,23 @@
-from fastapi import APIRouter, HTTPException
-from app.models import ApprovalsRequest, ApprovalsResponse
-from app.services.approvals_service import get_approvals_for_addresses
+from fastapi import APIRouter, HTTPException, Depends
+
+from app.dal.infura_approvals_dal import InfuraDAL
+from app.models.approvals_request import ApprovalsRequest
+from app.models.approvals_response import ApprovalsResponse
+from app.services.approvals_service import ApprovalsService
+from app.services.approvals_service_abc import ApprovalsServiceABC
 
 router = APIRouter()
 
+
+def get_approvals_service() -> ApprovalsServiceABC:
+    dal: InfuraDAL = InfuraDAL.get_instance()
+    return ApprovalsService.get_instance(dal)
+
+
 @router.post("/get_approvals", response_model=ApprovalsResponse)
-def get_approvals(request: ApprovalsRequest):
+def get_approvals(request: ApprovalsRequest,
+                  service: ApprovalsServiceABC = Depends(get_approvals_service)) -> ApprovalsResponse:
     try:
-        approvals = get_approvals_for_addresses(request.addresses)
-        return ApprovalsResponse(approvals=approvals)
+        return service.get_latest_approvals(request)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
