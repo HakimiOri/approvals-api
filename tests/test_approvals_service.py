@@ -6,14 +6,14 @@ from app.models.approvals.approvals_response import ApprovalsResponse
 from app.models.approvals.approvals import Approval
 
 def get_mocks(concurrency=1, retries=1, retry_delay=0):
-    mock_dal = MagicMock()
+    mock_approvals_dal = MagicMock()
     mock_config = MagicMock()
     mock_token_price_dal = MagicMock()
     mock_config.approvals_service_concurrency_limit = concurrency
     mock_config.approvals_api_retries = retries
     mock_config.approvals_api_retry_delay = retry_delay
-    service = ApprovalsService(mock_dal, mock_config, mock_token_price_dal)
-    return service, mock_dal, mock_config, mock_token_price_dal
+    service = ApprovalsService(mock_approvals_dal, mock_token_price_dal)
+    return service, mock_approvals_dal, mock_config, mock_token_price_dal
 
 def test_singleton():
     # Arrange
@@ -22,8 +22,8 @@ def test_singleton():
     token_price_dal = MagicMock()
 
     # Act
-    s1 = ApprovalsService.get_instance(dal, config, token_price_dal)
-    s2 = ApprovalsService.get_instance(dal, config, token_price_dal)
+    s1 = ApprovalsService.get_instance(dal, token_price_dal)
+    s2 = ApprovalsService.get_instance(dal, token_price_dal)
 
     # Assert
     assert s1 is s2
