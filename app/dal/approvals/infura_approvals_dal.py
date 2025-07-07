@@ -61,6 +61,7 @@ class InfuraDAL(ApprovalsDAL):
         try:
             contract = self.w3.eth.contract(address=token_address, abi=ERC20_SYMBOL_ABI)
             symbol: str = await contract.functions.symbol().call()
+            self._logger.info(f"Fetched token symbol for {token_address}: {symbol}")
         except (ValueError, ConnectionError, KeyError, AttributeError) as e:
             self._logger.warning(f"Failed to fetch token symbol for {token_address}: {e}")
             symbol = "UnknownERC20"
@@ -92,6 +93,7 @@ class InfuraDAL(ApprovalsDAL):
                     token_address=log.get('address'),
                     log_index=log.get('logIndex')
                 ))
+            self._logger.info(f"Fetched {len(approval_logs)} approval logs for owner {owner_address}")
             return approval_logs
         except (ValueError, ConnectionError, KeyError) as e:
             self._logger.error(f"Error fetching approval logs for {owner_address}: {e}")
