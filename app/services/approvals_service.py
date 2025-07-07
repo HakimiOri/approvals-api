@@ -37,6 +37,7 @@ class ApprovalsService(ApprovalsServiceBase):
     async def _fetch_for_address(self, owner_address: str, approvals_by_address: dict, errors_by_address: dict,
                                  semaphore: asyncio.Semaphore, include_prices: bool = False):
         config = self._config
+        last_exception = None
         for attempt in range(config.approvals_api_retries):
             try:
                 async with semaphore:
@@ -49,9 +50,12 @@ class ApprovalsService(ApprovalsServiceBase):
                     )
                 return
             except Exception as e:
+                last_exception = e
                 if attempt < config.approvals_api_retries - 1:
                     await asyncio.sleep(config.approvals_api_retry_delay)
-                    errors_by_address[owner_address] = str(e)
+
+        approvals_by_address[owner_address] = []
+        errors_by_address[owner_address] = str(last_exception)
 
     async def get_latest_approvals(self, request: ApprovalsRequest) -> ApprovalsResponse:
         approvals_by_address: dict[str, list[Approval]] = {}
