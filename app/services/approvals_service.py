@@ -46,7 +46,7 @@ class ApprovalsService(ApprovalsServiceABC):
                 Approval(
                     amount=approval_log.amount,
                     spender_address=approval_log.spender,
-                    token_symbol=getattr(approval_log, 'token_symbol', '')
+                    token_symbol= self.dal.get_token_symbol(approval_log.token_address),
                 )
                 for approval_log in latest_approvals.values()
             ]
