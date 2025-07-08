@@ -62,4 +62,11 @@ class ApprovalsService(ApprovalsServiceBase):
         await asyncio.gather(
             *(self._fetch_for_address(addr, approvals_by_address, errors_by_address, semaphore, include_prices=include_prices) for addr in
               request.addresses))
+
+        if not include_prices:
+            for approvals in approvals_by_address.values():
+                for approval in approvals:
+                    if hasattr(approval, 'price_usd'):
+                        delattr(approval, 'price_usd')
+
         return ApprovalsResponse(approvalsByAddress=approvals_by_address, errorsByAddress=errors_by_address)

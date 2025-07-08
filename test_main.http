@@ -33,3 +33,16 @@ Content-Type: application/json
 }
 
 ###
+
+###
+
+POST http://127.0.0.1:8000/get_approvals
+Content-Type: application/json
+
+{
+  "addresses": [
+    "0x005e20fCf757B55D6E27dEA9BA4f90C0B03EF852"
+  ]
+}
+
+###
